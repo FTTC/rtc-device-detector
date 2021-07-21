@@ -1,0 +1,34 @@
+{
+  "name": "rtc-device-detector-react",
+  "version": "1.0.1",
+  "main": "dist/index.js",
+  "author": "xinlxinli",
+  "license": "MIT",
+  "scripts": {
+    "start": "yarn run rollup -c -w",
+    "build": "yarn run rollup -c",
+    "wrap": "npx a18n wrap src --write",
+    "extract": "npx a18n extract src ./src/locales --locales zh-CN,en"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.14.6",
+    "@babel/preset-env": "^7.14.7",
+    "@babel/preset-react": "^7.14.5",
+    "autoprefixer": "^10.3.0",
+    "eslint-config-tencent": "^1.0.2",
+    "postcss": "^8.3.5",
+    "rollup": "^2.53.1",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-scss": "^3.0.0",
+    "sass": "^1.35.2"
+  },
+  "dependencies": {
+    "a18n": "^1.5.4",
+    "rtc-detect": "^0.0.1",
+    "trtc-js-sdk": "^4.11.1"
+  },
+  "peerDependencies": {
+    "react": ">=16.12.0",
+    "react-dom": ">=16.12.0"
+  }
+}
