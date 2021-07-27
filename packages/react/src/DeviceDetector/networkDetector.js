@@ -27,6 +27,7 @@ export default function networkDetector({ activeDetector, networkDetectInfo, han
     }
     return () => {
       clearInterval(timer);
+      uplinkStream && uplinkStream.close();
       uplinkClient && uplinkClient.leave();
       downlinkClient && downlinkClient.leave();
     };
