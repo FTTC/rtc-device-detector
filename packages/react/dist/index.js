@@ -1203,6 +1203,7 @@
 
       return function () {
         clearInterval(timer$1);
+        uplinkStream && uplinkStream.close();
         uplinkClient && uplinkClient.leave();
         downlinkClient && downlinkClient.leave();
       };
@@ -1618,7 +1619,7 @@
     '对着麦克风说"哈喽"试试～': 'Say "hello" to the microphone and try',
     '是否可以看到音量图标跳动？': 'Can you see the volume icon jump?',
     操作系统: 'Operating system',
-    浏览器: 'browser',
+    浏览器: 'Browser',
     是否支持TRTC: 'Is TRTC supported',
     是否支持屏幕分享: 'Is screen sharing supported',
     支持: 'Support',
