@@ -35,9 +35,29 @@ export default function DeviceConnect({ stepNameList, startDeviceDetect }) {
   const hasSpeakerDetect = stepNameList.indexOf('speaker') >= 0;
   const hasNetworkDetect = stepNameList.indexOf('network') >= 0;
 
-  useEffect(() => () => {
-    handleReset();
+  useEffect(() => {
+    getDeviceConnectResult();
+    return () => handleReset();
   }, []);
+
+  useEffect(() => {
+    let interval;
+    if (showConnectResult === false) {
+      interval = setInterval(() => {
+        setProgress((oldProgress) => {
+          if (oldProgress === 100) {
+            clearInterval(interval);
+            setShowConnectResult(true);
+            return 100;
+          }
+          return oldProgress + 10;
+        });
+      }, 200);
+    }
+    return () => {
+      clearInterval(interval);
+    };
+  }, [showConnectResult]);
 
   const handleReset = () => {
     setProgress(0);
@@ -46,9 +66,16 @@ export default function DeviceConnect({ stepNameList, startDeviceDetect }) {
   };
 
   const getDeviceConnectResult = async () => {
-    const cameraList = await TRTC.getCameras();
-    const micList = await TRTC.getMicrophones();
-    const speakerList = await TRTC.getSpeakers();
+    let cameraList = [];
+    let micList = [];
+    let speakerList = [];
+    try {
+      cameraList = await TRTC.getCameras();
+      micList = await TRTC.getMicrophones();
+      speakerList = await TRTC.getSpeakers();
+    } catch (error) {
+      console.log('rtc-device-detector getDeviceList error', error);
+    }
     const hasCameraDevice = cameraList.length > 0;
     const hasMicrophoneDevice = micList.length > 0;
     const hasSpeakerDevice = hasSpeakerDetect ? speakerList.length > 0 : true;
@@ -153,26 +180,6 @@ export default function DeviceConnect({ stepNameList, startDeviceDetect }) {
       success: false,
     };
   };
-
-  useEffect(() => {
-    let interval;
-    if (showConnectResult === false) {
-      interval = setInterval(() => {
-        setProgress((oldProgress) => {
-          if (oldProgress === 100) {
-            clearInterval(interval);
-            setShowConnectResult(true);
-            return 100;
-          }
-          return oldProgress + 10;
-        });
-      }, 200);
-      getDeviceConnectResult();
-    }
-    return () => {
-      clearInterval(interval);
-    };
-  }, [showConnectResult]);
 
   return (
     <div className="device-connect">

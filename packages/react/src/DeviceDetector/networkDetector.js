@@ -36,6 +36,9 @@ export default function networkDetector({ activeDetector, networkDetectInfo, han
   useEffect(() => {
     if (count === 0) {
       getAverageInfo(detectorInfo);
+      uplinkStream && uplinkStream.close();
+      uplinkClient && uplinkClient.leave();
+      downlinkClient && downlinkClient.leave();
     }
   }, [count]);
 
@@ -145,13 +148,10 @@ export default function networkDetector({ activeDetector, networkDetectInfo, han
     };
     handleCompleted('success', detectorResultInfo);
     setDetectorInfo(detectorResultInfo);
-    uplinkStream && uplinkStream.close();
-    uplinkClient && uplinkClient.leave();
-    downlinkClient && downlinkClient.leave();
   };
 
-  return (
-    <div className={`testing-body ${activeDetector !== currentDetector && 'hide'}`}>
+  return activeDetector === currentDetector && (
+    <div className="testing-body">
       <div className="testing-list">
         <div className="testing-item-container">
           <div>{a18n('操作系统')}</div>

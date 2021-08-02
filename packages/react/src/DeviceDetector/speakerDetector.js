@@ -9,6 +9,7 @@ const mp3Url = 'https://1256993030.vod2.myqcloud.com/d520582dvodtransgzp12569930
 export default function SpeakerDetector({ audioUrl, activeDetector, handleCompleted }) {
   const [speakerLabel, setSpeakerLabel] = useState('');
   const [url, setUrl] = useState('');
+  const [choseDevice, setChoseDevice] = useState(null);
 
   useEffect(() => {
     if (audioUrl === '') {
@@ -32,16 +33,20 @@ export default function SpeakerDetector({ audioUrl, activeDetector, handleComple
   }, [activeDetector]);
 
   const handleSpeakerChange = async (speakerDevice) => {
+    setChoseDevice(speakerDevice);
     const { deviceId, label } = speakerDevice;
     audioPlayer && (await audioPlayer.setSinkId(deviceId));
     setSpeakerLabel(label);
   };
 
-  return (
-    <div className={`testing-body ${activeDetector !== currentDetector && 'hide'}`}>
+  return activeDetector === currentDetector && (
+    <div className="testing-body">
       <div className="device-list">
         <span className="device-list-title">{a18n('扬声器选择')}</span>
-        <DeviceSelect selectType="option" label={a18n('扬声器选择')} deviceType="speaker" onChange={handleSpeakerChange}></DeviceSelect>
+        <DeviceSelect
+          deviceType="speaker"
+          choseDevice={choseDevice}
+          onChange={handleSpeakerChange}></DeviceSelect>
       </div>
       <div className="audio-player-container">
         <div className="audio-player-info">{a18n('请调高设备音量，点击播放下面的音频试试～')}</div>

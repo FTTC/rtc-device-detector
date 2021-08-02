@@ -12,6 +12,7 @@ export default function MicrophoneDetector({ activeDetector, handleCompleted }) 
   const [microphoneID, setMicrophoneID] = useState('');
   const [microphoneLabel, setMicrophoneLabel] = useState('');
   const [volumeNum, setVolumeNum] = useState(0);
+  const [choseDevice, setChoseDevice] = useState(null);
 
   const initStream = async (microphoneID) => {
     console.log('microphoneID', microphoneID);
@@ -43,6 +44,7 @@ export default function MicrophoneDetector({ activeDetector, handleCompleted }) 
   }, [activeDetector]);
 
   const handleMicrophoneChange = async (microphoneDevice) => {
+    setChoseDevice(microphoneDevice);
     const { deviceId, label } = microphoneDevice;
     if (localStream) {
       localStream.switchDevice('audio', deviceId);
@@ -53,11 +55,14 @@ export default function MicrophoneDetector({ activeDetector, handleCompleted }) 
     setMicrophoneLabel(label);
   };
 
-  return (
-    <div className={`testing-body ${activeDetector !== currentDetector && 'hide'}`}>
+  return activeDetector === currentDetector && (
+    <div className="testing-body">
       <div className="device-list">
         <span className="device-list-title">{a18n('麦克风选择')}</span>
-        <DeviceSelect selectType="option" label={a18n('麦克风选择')} deviceType="microphone" onChange={handleMicrophoneChange}></DeviceSelect>
+        <DeviceSelect
+          deviceType="microphone"
+          choseDevice={choseDevice}
+          onChange={handleMicrophoneChange}></DeviceSelect>
       </div>
       <div className="mic-testing-container">
         <div className="mic-testing-info">{a18n('对着麦克风说"哈喽"试试～')}</div>

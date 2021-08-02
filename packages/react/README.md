@@ -1,4 +1,4 @@
-rtc-device-detector-react 是腾讯云实时音视频 Web 端设备及网络检测公共组件, 使用 [React](https://react.docschina.org/) 框架，依托 [trtc-js-sdk](https://www.npmjs.com/package/trtc-js-sdk) 以及 [rtc-detect](https://www.npmjs.com/package/rtc-detect) 完成公共组件开发。rtc-device-detector-react 支持网络检测可选，支持中英文两种语言 。
+rtc-device-detector-react 是腾讯云实时音视频 Web 端设备及网络检测公共组件, 使用 [React](https://react.docschina.org/) 框架，依托 [trtc-js-sdk](https://www.npmjs.com/package/trtc-js-sdk) 以及 [rtc-detect](https://www.npmjs.com/package/rtc-detect) 完成公共组件开发。rtc-device-detector-react 支持网络检测可选，支持中英文两种语言，同时提供 [github 源码](https://github.com/FTTC/rtc-device-detector) 以供参考和使用。
 
 ![img](https://sdk-web-1252463788.cos.ap-hongkong.myqcloud.com/trtc/webrtc/assets/rtc-device-detector.jpeg)
 

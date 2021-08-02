@@ -352,10 +352,32 @@
     var hasSpeakerDetect = stepNameList.indexOf('speaker') >= 0;
     var hasNetworkDetect = stepNameList.indexOf('network') >= 0;
     React.useEffect(function () {
+      getDeviceConnectResult();
       return function () {
-        handleReset();
+        return handleReset();
       };
     }, []);
+    React.useEffect(function () {
+      var interval;
+
+      if (showConnectResult === false) {
+        interval = setInterval(function () {
+          setProgress(function (oldProgress) {
+            if (oldProgress === 100) {
+              clearInterval(interval);
+              setShowConnectResult(true);
+              return 100;
+            }
+
+            return oldProgress + 10;
+          });
+        }, 200);
+      }
+
+      return function () {
+        clearInterval(interval);
+      };
+    }, [showConnectResult]);
 
     var handleReset = function handleReset() {
       setProgress(0);
@@ -370,43 +392,56 @@
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.next = 2;
+                cameraList = [];
+                micList = [];
+                speakerList = [];
+                _context.prev = 3;
+                _context.next = 6;
                 return TRTC.getCameras();
 
-              case 2:
+              case 6:
                 cameraList = _context.sent;
-                _context.next = 5;
+                _context.next = 9;
                 return TRTC.getMicrophones();
 
-              case 5:
+              case 9:
                 micList = _context.sent;
-                _context.next = 8;
+                _context.next = 12;
                 return TRTC.getSpeakers();
 
-              case 8:
+              case 12:
                 speakerList = _context.sent;
+                _context.next = 18;
+                break;
+
+              case 15:
+                _context.prev = 15;
+                _context.t0 = _context["catch"](3);
+                console.log('rtc-device-detector getDeviceList error', _context.t0);
+
+              case 18:
                 hasCameraDevice = cameraList.length > 0;
                 hasMicrophoneDevice = micList.length > 0;
                 hasSpeakerDevice = hasSpeakerDetect ? speakerList.length > 0 : true;
 
                 if (!hasNetworkDetect) {
-                  _context.next = 18;
+                  _context.next = 27;
                   break;
                 }
 
-                _context.next = 15;
+                _context.next = 24;
                 return isOnline();
 
-              case 15:
-                _context.t0 = _context.sent;
-                _context.next = 19;
+              case 24:
+                _context.t1 = _context.sent;
+                _context.next = 28;
                 break;
 
-              case 18:
-                _context.t0 = true;
+              case 27:
+                _context.t1 = true;
 
-              case 19:
-                hasNetworkConnect = _context.t0;
+              case 28:
+                hasNetworkConnect = _context.t1;
                 deviceStateObj = {
                   hasCameraDevice: hasCameraDevice,
                   hasMicrophoneDevice: hasMicrophoneDevice,
@@ -455,12 +490,12 @@
                   });
                 }
 
-              case 25:
+              case 34:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee);
+        }, _callee, null, [[3, 15]]);
       }));
 
       return function getDeviceConnectResult() {
@@ -519,28 +554,6 @@
       };
     };
 
-    React.useEffect(function () {
-      var interval;
-
-      if (showConnectResult === false) {
-        interval = setInterval(function () {
-          setProgress(function (oldProgress) {
-            if (oldProgress === 100) {
-              clearInterval(interval);
-              setShowConnectResult(true);
-              return 100;
-            }
-
-            return oldProgress + 10;
-          });
-        }, 200);
-        getDeviceConnectResult();
-      }
-
-      return function () {
-        clearInterval(interval);
-      };
-    }, [showConnectResult]);
     return /*#__PURE__*/React__default.createElement("div", {
       className: "device-connect"
     }, /*#__PURE__*/React__default.createElement("div", {
@@ -689,7 +702,8 @@
 
   function DeviceSelect(_ref2) {
     var deviceType = _ref2.deviceType,
-        onChange = _ref2.onChange;
+        onChange = _ref2.onChange,
+        choseDevice = _ref2.choseDevice;
 
     var _useState = React.useState([]),
         _useState2 = _slicedToArray(_useState, 2),
@@ -713,7 +727,7 @@
 
       function _getDeviceListData() {
         _getDeviceListData = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-          var list;
+          var list, deviceIdList;
           return regeneratorRuntime.wrap(function _callee2$(_context2) {
             while (1) {
               switch (_context2.prev = _context2.next) {
@@ -723,9 +737,20 @@
 
                 case 2:
                   list = _context2.sent;
+                  deviceIdList = list.map(function (item) {
+                    return item.deviceId;
+                  });
                   setDeviceList(list);
-                  setActiveDevice(list[0]);
-                  setActiveDeviceId(list[0].deviceId);
+
+                  if (choseDevice && deviceIdList.indexOf(choseDevice.deviceId) >= 0) {
+                    setActiveDevice(list.filter(function (item) {
+                      return item.deviceId === choseDevice.deviceId;
+                    })[0]);
+                    setActiveDeviceId(choseDevice.deviceId);
+                  } else {
+                    setActiveDevice(list[0]);
+                    setActiveDeviceId(list[0].deviceId);
+                  }
 
                 case 6:
                 case "end":
@@ -744,7 +769,7 @@
         onChange && onChange(activeDevice);
       }
     }, [activeDevice]);
-    navigator.mediaDevices.ondevicechange = /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+    navigator.mediaDevices.addEventListener('devicechange', /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
       var newList;
       return regeneratorRuntime.wrap(function _callee3$(_context3) {
         while (1) {
@@ -763,7 +788,7 @@
           }
         }
       }, _callee3);
-    }));
+    })));
 
     var handleChange = function handleChange(event) {
       var deviceID = event.target.value;
@@ -801,6 +826,11 @@
         _useState4 = _slicedToArray(_useState3, 2),
         cameraID = _useState4[0],
         setCameraID = _useState4[1];
+
+    var _useState5 = React.useState(null),
+        _useState6 = _slicedToArray(_useState5, 2),
+        choseDevice = _useState6[0],
+        setChoseDevice = _useState6[1];
 
     var initStream = /*#__PURE__*/function () {
       var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(cameraID) {
@@ -852,6 +882,7 @@
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
+                setChoseDevice(cameraDevice);
                 deviceId = cameraDevice.deviceId, label = cameraDevice.label;
 
                 if (localStream) {
@@ -863,7 +894,7 @@
                 setCameraID(deviceId);
                 setCameraLabel(label);
 
-              case 4:
+              case 5:
               case "end":
                 return _context2.stop();
             }
@@ -884,14 +915,15 @@
       handleCompleted('success', cameraLabel);
     };
 
-    return /*#__PURE__*/React__default.createElement("div", {
-      className: "testing-body ".concat(activeDetector !== currentDetector && 'hide')
+    return activeDetector === currentDetector && /*#__PURE__*/React__default.createElement("div", {
+      className: "testing-body"
     }, /*#__PURE__*/React__default.createElement("div", {
       className: "device-list"
     }, /*#__PURE__*/React__default.createElement("span", {
       className: "device-list-title"
     }, a18n('摄像头选择')), /*#__PURE__*/React__default.createElement(DeviceSelect, {
       deviceType: "camera",
+      choseDevice: choseDevice,
       onChange: handleCameraChange
     })), /*#__PURE__*/React__default.createElement("div", {
       id: "camera-video",
@@ -932,6 +964,11 @@
         _useState6 = _slicedToArray(_useState5, 2),
         volumeNum = _useState6[0],
         setVolumeNum = _useState6[1];
+
+    var _useState7 = React.useState(null),
+        _useState8 = _slicedToArray(_useState7, 2),
+        choseDevice = _useState8[0],
+        setChoseDevice = _useState8[1];
 
     var initStream = /*#__PURE__*/function () {
       var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(microphoneID) {
@@ -990,6 +1027,7 @@
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
+                setChoseDevice(microphoneDevice);
                 deviceId = microphoneDevice.deviceId, label = microphoneDevice.label;
 
                 if (localStream$1) {
@@ -1001,7 +1039,7 @@
                 setMicrophoneID(deviceId);
                 setMicrophoneLabel(label);
 
-              case 4:
+              case 5:
               case "end":
                 return _context2.stop();
             }
@@ -1014,16 +1052,15 @@
       };
     }();
 
-    return /*#__PURE__*/React__default.createElement("div", {
-      className: "testing-body ".concat(activeDetector !== currentDetector$1 && 'hide')
+    return activeDetector === currentDetector$1 && /*#__PURE__*/React__default.createElement("div", {
+      className: "testing-body"
     }, /*#__PURE__*/React__default.createElement("div", {
       className: "device-list"
     }, /*#__PURE__*/React__default.createElement("span", {
       className: "device-list-title"
     }, a18n('麦克风选择')), /*#__PURE__*/React__default.createElement(DeviceSelect, {
-      selectType: "option",
-      label: a18n('麦克风选择'),
       deviceType: "microphone",
+      choseDevice: choseDevice,
       onChange: handleMicrophoneChange
     })), /*#__PURE__*/React__default.createElement("div", {
       className: "mic-testing-container"
@@ -1075,6 +1112,11 @@
         url = _useState4[0],
         setUrl = _useState4[1];
 
+    var _useState5 = React.useState(null),
+        _useState6 = _slicedToArray(_useState5, 2),
+        choseDevice = _useState6[0],
+        setChoseDevice = _useState6[1];
+
     React.useEffect(function () {
       if (audioUrl === '') {
         setUrl(mp3Url);
@@ -1103,21 +1145,22 @@
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
+                setChoseDevice(speakerDevice);
                 deviceId = speakerDevice.deviceId, label = speakerDevice.label;
                 _context.t0 = audioPlayer;
 
                 if (!_context.t0) {
-                  _context.next = 5;
+                  _context.next = 6;
                   break;
                 }
 
-                _context.next = 5;
+                _context.next = 6;
                 return audioPlayer.setSinkId(deviceId);
 
-              case 5:
+              case 6:
                 setSpeakerLabel(label);
 
-              case 6:
+              case 7:
               case "end":
                 return _context.stop();
             }
@@ -1130,16 +1173,15 @@
       };
     }();
 
-    return /*#__PURE__*/React__default.createElement("div", {
-      className: "testing-body ".concat(activeDetector !== currentDetector$2 && 'hide')
+    return activeDetector === currentDetector$2 && /*#__PURE__*/React__default.createElement("div", {
+      className: "testing-body"
     }, /*#__PURE__*/React__default.createElement("div", {
       className: "device-list"
     }, /*#__PURE__*/React__default.createElement("span", {
       className: "device-list-title"
     }, a18n('扬声器选择')), /*#__PURE__*/React__default.createElement(DeviceSelect, {
-      selectType: "option",
-      label: a18n('扬声器选择'),
       deviceType: "speaker",
+      choseDevice: choseDevice,
       onChange: handleSpeakerChange
     })), /*#__PURE__*/React__default.createElement("div", {
       className: "audio-player-container"
@@ -1211,6 +1253,9 @@
     React.useEffect(function () {
       if (count === 0) {
         getAverageInfo(detectorInfo);
+        uplinkStream && uplinkStream.close();
+        uplinkClient && uplinkClient.leave();
+        downlinkClient && downlinkClient.leave();
       }
     }, [count]);
 
@@ -1444,13 +1489,10 @@
 
       handleCompleted('success', detectorResultInfo);
       setDetectorInfo(detectorResultInfo);
-      uplinkStream && uplinkStream.close();
-      uplinkClient && uplinkClient.leave();
-      downlinkClient && downlinkClient.leave();
     };
 
-    return /*#__PURE__*/React__default.createElement("div", {
-      className: "testing-body ".concat(activeDetector !== currentDetector$3 && 'hide')
+    return activeDetector === currentDetector$3 && /*#__PURE__*/React__default.createElement("div", {
+      className: "testing-body"
     }, /*#__PURE__*/React__default.createElement("div", {
       className: "testing-list"
     }, /*#__PURE__*/React__default.createElement("div", {
