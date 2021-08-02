@@ -19,7 +19,7 @@ const getDeviceList = async (deviceType) => {
   return deviceList;
 };
 
-export default function DeviceSelect({ deviceType, onChange }) {
+export default function DeviceSelect({ deviceType, onChange, choseDevice }) {
   const [deviceList, setDeviceList] = useState([]);
   const [activeDevice, setActiveDevice] = useState({});
   const [activeDeviceId, setActiveDeviceId] = useState('');
@@ -27,9 +27,15 @@ export default function DeviceSelect({ deviceType, onChange }) {
   useEffect(() => {
     async function getDeviceListData() {
       const list = await getDeviceList(deviceType);
+      const deviceIdList = list.map(item => item.deviceId);
       setDeviceList(list);
-      setActiveDevice(list[0]);
-      setActiveDeviceId(list[0].deviceId);
+      if (choseDevice && deviceIdList.indexOf(choseDevice.deviceId) >= 0) {
+        setActiveDevice(list.filter(item => item.deviceId === choseDevice.deviceId)[0]);
+        setActiveDeviceId(choseDevice.deviceId);
+      } else {
+        setActiveDevice(list[0]);
+        setActiveDeviceId(list[0].deviceId);
+      }
     }
     getDeviceListData();
   }, []);
@@ -40,10 +46,10 @@ export default function DeviceSelect({ deviceType, onChange }) {
     }
   }, [activeDevice]);
 
-  navigator.mediaDevices.ondevicechange = async () => {
+  navigator.mediaDevices.addEventListener('devicechange', async () => {
     const newList = await getDeviceList(deviceType);
     setDeviceList(newList);
-  };
+  });
 
   const handleChange = (event) => {
     const deviceID = event.target.value;

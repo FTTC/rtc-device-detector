@@ -10,6 +10,7 @@ const currentDetector = 'camera';
 export default function cameraDetector({ activeDetector, handleCompleted }) {
   const [cameraLabel, setCameraLabel] = useState('');
   const [cameraID, setCameraID] = useState('');
+  const [choseDevice, setChoseDevice] = useState(null);
 
   const initStream = async (cameraID) => {
     localStream = TRTC.createStream({
@@ -34,6 +35,7 @@ export default function cameraDetector({ activeDetector, handleCompleted }) {
   }, [activeDetector]);
 
   const handleCameraChange = async (cameraDevice) => {
+    setChoseDevice(cameraDevice);
     const { deviceId, label } = cameraDevice;
     if (localStream) {
       localStream.switchDevice('video', deviceId);
@@ -52,11 +54,14 @@ export default function cameraDetector({ activeDetector, handleCompleted }) {
     handleCompleted('success', cameraLabel);
   };
 
-  return (
-    <div className={`testing-body ${activeDetector !== currentDetector && 'hide'}`}>
+  return activeDetector === currentDetector && (
+    <div className="testing-body">
       <div className="device-list">
         <span className="device-list-title">{a18n('摄像头选择')}</span>
-        <DeviceSelect deviceType="camera" onChange={handleCameraChange}></DeviceSelect>
+        <DeviceSelect
+          deviceType="camera"
+          choseDevice={choseDevice}
+          onChange={handleCameraChange}></DeviceSelect>
       </div>
       <div id="camera-video" className="camera-video"></div>
       <div className="testing-info-container">
