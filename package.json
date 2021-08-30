@@ -1,10 +1,11 @@
 {
   "name": "root",
   "private": true,
-  "workspaces": [
-    "packages/*",
-    "examples/*"
-  ],
+  "scripts": {
+    "clean": "lerna clean --yes && rm -rf node_modules",
+    "bootstrap": "lerna bootstrap --hoist",
+    "start:vue2": "lerna run --scope example-vue2 serve --stream"
+  },
   "devDependencies": {
     "lerna": "^4.0.0"
   }
