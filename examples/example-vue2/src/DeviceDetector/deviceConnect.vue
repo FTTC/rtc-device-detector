@@ -3,7 +3,11 @@
     <div class="testing-title">设备连接</div>
     <div class="testing-prepare-info">
       {{
-        `设备检测前请确认设备连接了${hasCameraDetect ? '摄像头' : ''}${hasMicrophoneDetect ? '、麦克风' : ''}${hasSpeakerDetect ? '、扬声器' : ''}${this.hasNetworkDetect ? '和网络' : ''}`
+        `设备检测前请确认设备连接了
+          ${hasCameraDetect ? '摄像头' : ''}
+          ${hasMicrophoneDetect ? '、麦克风' : ''}
+          ${hasSpeakerDetect ? '、扬声器' : ''}
+          ${this.hasNetworkDetect ? '和网络' : ''}`
       }}
     </div>
     <div class="device-display">
@@ -56,7 +60,10 @@
         @touchend="() => setShowRemind(false)"
         @mouseleave="() => setShowRemind(false)">
         <span class="error-icon">error</span>
-        <div v-if="showRemind" class="connect-attention-info" dangerouslySetInnerHTML={{ __html: connectResult.remind }}>
+        <div
+          v-if="showRemind"
+          class="connect-attention-info">
+          {{ connectResult.remind }}
         </div>
       </div>
     </div>
@@ -107,7 +114,7 @@ export default {
       showConnectResult: false,
       progressInterval: null,
       showRemind: false,
-    }
+    };
   },
   computed: {
     hasCameraDetect() {
@@ -123,7 +130,7 @@ export default {
       return this.stepNameList.indexOf('network') >= 0;
     },
     showReconnectButton() {
-      const deviceState = this.deviceState;
+      const { deviceState } = this;
       return this.showConnectResult
         && !(deviceState.hasCameraConnect
         && deviceState.hasMicrophoneConnect
@@ -131,13 +138,13 @@ export default {
         && deviceState.hasNetworkConnect);
     },
     showStartDetectButton() {
-      const deviceState = this.deviceState;
+      const { deviceState } = this;
       return this.showConnectResult
         && (deviceState.hasCameraConnect
         && deviceState.hasMicrophoneConnect
         && deviceState.hasSpeakerConnect
         && deviceState.hasNetworkConnect);
-    }
+    },
   },
   watch: {
     showConnectResult: {
@@ -152,8 +159,8 @@ export default {
             }
           }, 200);
         }
-      }
-    }
+      },
+    },
   },
   methods: {
     handleReset() {
@@ -275,8 +282,8 @@ export default {
   },
   mounted() {
     this.getDeviceConnectResult();
-  }
-}
+  },
+};
 </script>
 
 <style lang="scss" src="./index.scss" scoped></style>

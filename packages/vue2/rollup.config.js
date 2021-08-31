@@ -9,6 +9,7 @@ import { writeFileSync } from 'fs'; // 写文件
 
 const config = {
   input: './src/index.js', // 必须，入口文件
+  external: ['vue', 'trtc-js-sdk'],
   output: { // 必须，输出文件 (如果要输出多个，可以是一个数组)
     sourcemap: true,
     file: './dist/index.js',

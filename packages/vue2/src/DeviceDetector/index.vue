@@ -23,7 +23,7 @@ export default {
     hasNetworkDetect: {
       type: Boolean,
       default: true,
-    }
+    },
   },
   data() {
     return {

@@ -7,13 +7,19 @@
 
 <script>
 // import HelloWorld from './components/HelloWorld.vue';
+import DeviceDetector from './DeviceDetector/index.vue';
 
 export default {
   name: 'App',
   components: {
     // HelloWorld,
-  }
-}
+    DeviceDetector,
+  },
+  methods: {
+  },
+  mounted() {
+  },
+};
 </script>
 
 <style>
