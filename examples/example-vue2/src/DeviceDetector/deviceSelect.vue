@@ -1,6 +1,6 @@
 <template>
   <div>
-    <select class="device-select" :value="activeDeviceId" :onChange="handleChange">
+    <select class="device-select" :value="activeDeviceId" @change="handleChange">
       <option
         v-for="(item, index) in deviceList"
         :value="item.deviceId"

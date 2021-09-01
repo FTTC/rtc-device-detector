@@ -1,23 +1,55 @@
 <template>
   <div id="app">
-    <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
-    <device-detector></device-detector>
+    <DeviceDetector
+      :visible="visible"
+      :onClose="handleClose"
+      :networkDetectInfo="networkDetectInfo"></DeviceDetector>
   </div>
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue';
+import { SDKAPPID } from './app/config';
+import { getLatestUserSig } from './app/index';
 import DeviceDetector from './DeviceDetector/index.vue';
 
 export default {
   name: 'App',
   components: {
-    // HelloWorld,
     DeviceDetector,
   },
+  data() {
+    return {
+      networkDetectInfo: {},
+      visible: true,
+    };
+  },
   methods: {
+    initData() {
+      const uplinkUserId = 'uplink_test';
+      const { userSig: uplinkUserSig } = getLatestUserSig(uplinkUserId);
+      const downlinkUserId = 'downlink_test';
+      const { userSig: downlinkUserSig } = getLatestUserSig(downlinkUserId);
+      const roomId = 999999;
+      const networkDetectInfo = {
+        sdkAppId: SDKAPPID,
+        roomId,
+        uplinkUserInfo: {
+          uplinkUserId,
+          uplinkUserSig,
+        },
+        downlinkUserInfo: {
+          downlinkUserId,
+          downlinkUserSig,
+        },
+      };
+      this.networkDetectInfo = networkDetectInfo;
+    },
+    handleClose() {
+      this.visible = false;
+    },
   },
   mounted() {
+    this.initData();
   },
 };
 </script>

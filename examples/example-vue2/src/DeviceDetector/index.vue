@@ -40,14 +40,20 @@
             :key="index"
             :activeDetector="stepNameList[activeStep]"
             :handleCompleted="handleCompleted"></SpeakerDetector>
-          <!-- <NetworkDetector
+          <NetworkDetector
+            v-if="step === 'network'"
             :key="index"
             :activeDetector="stepNameList[activeStep]"
             :networkDetectInfo="networkDetectInfo"
             :handleCompleted="handleCompleted"
-            :generateReport="() => setDetectStage(2)"></NetworkDetector> -->
+            :generateReport="() => this.detectStage = 2"></NetworkDetector>
         </div>
       </div>
+      <DetectorReport
+        v-if="detectStage === 2"
+        :reportData="completed"
+        :handleReset="handleReset"
+        :handleClose="handleClose"></DetectorReport>
     </div>
   </div>
 </template>
@@ -58,6 +64,7 @@ import DeviceConnect from './deviceConnect.vue';
 import CameraDetector from './cameraDetector.vue';
 import MicDetector from './micDetector.vue';
 import SpeakerDetector from './speakerDetector.vue';
+import NetworkDetector from './networkDetector.vue';
 export default {
   name: 'deviceDetector',
   components: {
@@ -66,6 +73,7 @@ export default {
     CameraDetector,
     MicDetector,
     SpeakerDetector,
+    NetworkDetector,
   },
   props: {
     onClose: Function,
@@ -73,6 +81,8 @@ export default {
       type: Boolean,
       default: true,
     },
+    networkDetectInfo: Object,
+    audioUrl: String,
   },
   data() {
     return {

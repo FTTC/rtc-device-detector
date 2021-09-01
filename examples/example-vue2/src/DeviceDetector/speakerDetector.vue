@@ -9,7 +9,7 @@
     </div>
     <div class="audio-player-container">
       <div class="audio-player-info">请调高设备音量，点击播放下面的音频试试～</div>
-      <audio id="audio-player" :src="url" controls></audio>
+      <audio id="audio-player" :src="audioUrl" controls></audio>
     </div>
     <div class="testing-info-container">
       <div class="testing-info">是否可以听到声音？</div>
@@ -27,7 +27,10 @@ import Button from './button.vue';
 export default {
   name: 'speakerDetector',
   props: {
-    audioUrl: String,
+    audioUrl: {
+      type: String,
+      default: 'https://1256993030.vod2.myqcloud.com/d520582dvodtransgzp1256993030/45f1edea3701925920950247965/v.f1010.mp3',
+    },
     activeDetector: String,
     handleCompleted: Function,
   },
