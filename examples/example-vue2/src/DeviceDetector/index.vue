@@ -5,7 +5,7 @@
       <DeviceConnect
         v-if="detectStage === 0"
         :stepNameList="stepNameList"
-        :startDeviceDetect="() => this.detectState = 1"></DeviceConnect>
+        :startDeviceDetect="() => setDetectStage(1)"></DeviceConnect>
 
       <div v-if="detectStage === 1" class="step-container">
         <div
@@ -46,7 +46,7 @@
             :activeDetector="stepNameList[activeStep]"
             :networkDetectInfo="networkDetectInfo"
             :handleCompleted="handleCompleted"
-            :generateReport="() => this.detectStage = 2"></NetworkDetector>
+            :generateReport="() => setDetectStage(2)"></NetworkDetector>
         </div>
       </div>
       <DetectorReport
@@ -65,6 +65,7 @@ import CameraDetector from './cameraDetector.vue';
 import MicDetector from './micDetector.vue';
 import SpeakerDetector from './speakerDetector.vue';
 import NetworkDetector from './networkDetector.vue';
+import DetectorReport from './detectorReport.vue';
 export default {
   name: 'deviceDetector',
   components: {
@@ -74,6 +75,7 @@ export default {
     MicDetector,
     SpeakerDetector,
     NetworkDetector,
+    DetectorReport,
   },
   props: {
     onClose: Function,
@@ -87,7 +89,7 @@ export default {
   data() {
     return {
       stepNameList: [],
-      detectStage: 1,
+      detectStage: 0,
       activeStep: 0,
       isOpen: true,
       completed: {},
@@ -130,10 +132,13 @@ export default {
     stopBubble(event) {
       event.stopPropagation();
     },
+    setDetectStage(value) {
+      this.detectStage = value;
+    },
     // 重新检测
     handleReset() {
       this.completed = {};
-      this.detectState = 0;
+      this.detectStage = 0;
       this.activeStep = 0;
     },
     // 结束检测
