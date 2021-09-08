@@ -47,6 +47,21 @@ export default {
       choseDevice: null,
     };
   },
+  watch: {
+    activeDetector(val, oldVal) {
+      if (val === this.currentDetector) {
+        this.audioPlayer = document.getElementById('audio-player');
+      }
+      if (oldVal === this.currentDetector) {
+        if (this.audioPlayer && !this.audioPlayer.paused) {
+          this.audioPlayer.pause();
+        }
+        if (this.audioPlayer) {
+          this.audioPlayer.currentTime = 0;
+        }
+      }
+    },
+  },
   methods: {
     async handleSpeakerChange(speakerDevice) {
       this.choseDevice = speakerDevice;
