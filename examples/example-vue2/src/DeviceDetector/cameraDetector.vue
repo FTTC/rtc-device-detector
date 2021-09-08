@@ -40,6 +40,17 @@ export default {
       choseDevice: null,
     };
   },
+  watch: {
+    activeDetector(val, oldVal) {
+      if (val === this.currentDetector && !this.localStream && this.cameraID) {
+        this.initStream(this.cameraID);
+      }
+      if (oldVal === this.currentDetector) {
+        this.localStream && this.localStream.close();
+        this.localStream = null;
+      }
+    },
+  },
   methods: {
     async initStream(cameraID) {
       this.localStream = TRTC.createStream({

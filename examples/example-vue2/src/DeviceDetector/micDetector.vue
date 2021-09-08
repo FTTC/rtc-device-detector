@@ -49,7 +49,21 @@ export default {
       microphoneLabel: '',
       volumeNum: 0,
       choseDevice: null,
+      timer: null,
     };
+  },
+  watch: {
+    activeDetector(val, oldVal) {
+      if (val === this.currentDetector && !this.localStream && this.microphoneID) {
+        this.initStream(this.microphoneID);
+      }
+      if (oldVal === this.currentDetector) {
+        this.localStream && this.localStream.close();
+        this.localStream = null;
+        clearInterval(this.timer);
+        this.volumeNum = 0;
+      }
+    },
   },
   methods: {
     async initStream(microphoneID) {
