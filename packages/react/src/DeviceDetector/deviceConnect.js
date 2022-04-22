@@ -24,7 +24,7 @@ const networkFailAttention = a18n('1. 请检查设备是否联网<br>')
   + a18n('2. 请刷新网页后再次检测<br>')
   + a18n('3. 请尝试更换网络后再次检测');
 
-export default function DeviceConnect({ stepNameList, startDeviceDetect }) {
+export default function DeviceConnect({ stepNameList, startDeviceDetect, hasCameraDetect }) {
   const [progress, setProgress] = useState(0);
   const [deviceState, setDeviceState] = useState({});
   const [connectResult, setConnectResult] = useState({});
@@ -92,7 +92,7 @@ export default function DeviceConnect({ stepNameList, startDeviceDetect }) {
     setDeviceState(deviceStateObj);
     setConnectResult(getDeviceConnectInfo(deviceStateObj));
 
-    if (hasCameraDevice) {
+    if (hasCameraDevice && hasCameraDetect) {
       navigator.mediaDevices
         .getUserMedia({ video: true, audio: false })
         .then((stream) => {
@@ -186,7 +186,7 @@ export default function DeviceConnect({ stepNameList, startDeviceDetect }) {
       <div className="testing-title">{a18n('设备连接')}</div>
       <div className="testing-prepare-info">
       {
-        a18n`设备检测前请确认设备连接了${hasCameraDetect ? a18n('摄像头') : ''}${hasMicrophoneDetect ? a18n('、麦克风') : ''}${hasSpeakerDetect ? a18n('、扬声器') : ''}${hasNetworkDetect ? a18n('和网络') : ''}`
+        a18n`设备检测前请确认设备连接了${hasCameraDetect ? `${a18n('camera')}${a18n('分隔符')}` : ''}${hasMicrophoneDetect ? a18n('microphone') : ''}${hasSpeakerDetect ? `${a18n('分隔符')}${a18n('speaker')}` : ''}${hasNetworkDetect ? `${a18n('和')}${a18n('network')}` : ''}`
       }
       </div>
       <div className="device-display">
