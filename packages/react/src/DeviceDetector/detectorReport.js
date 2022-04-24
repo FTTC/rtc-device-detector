@@ -8,7 +8,7 @@ export default function DetectorReport({ reportData, handleReset, handleClose })
     <div className="device-testing-report">
         <div className="testing-title">{a18n('检测报告')}</div>
         <div className="device-report-list">
-            <div className="device-report">
+            {reportData.camera && <div className="device-report">
               <div className="device-info">
                 <span className="report-icon">
                   {CameraIcon}
@@ -18,7 +18,7 @@ export default function DetectorReport({ reportData, handleReset, handleClose })
                 <div className={`${reportData.camera.type === 'success' ? 'green' : 'red'}`}>
                   {reportData.camera.type === 'success' ? a18n('正常') : a18n('异常')}
               </div>
-            </div>
+            </div>}
             <div className="device-report">
               <div className="device-info">
                 <span className="report-icon">
