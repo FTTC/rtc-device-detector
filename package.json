@@ -5,6 +5,9 @@
     "packages/*",
     "examples/*"
   ],
+  "scripts": {
+    "clean": "lerna clean --yes && rm -rf node_modules"
+  },
   "devDependencies": {
     "lerna": "^4.0.0"
   }

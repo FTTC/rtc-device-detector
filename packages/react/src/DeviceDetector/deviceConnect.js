@@ -13,17 +13,6 @@ import {
   ErrorIcon,
 } from './utils';
 
-const deviceFailAttention = a18n('1. 若浏览器弹出提示，请选择“允许”<br>')
-  + a18n('2. 若杀毒软件弹出提示，请选择“允许”<br>')
-  + a18n('3. 检查系统设置，允许浏览器访问摄像头及麦克风<br>')
-  + a18n('4. 检查浏览器设置，允许网页访问摄像头及麦克风<br>')
-  + a18n('5. 检查摄像头/麦克风是否正确连接并开启<br>')
-  + a18n('6. 尝试重新连接摄像头/麦克风<br>')
-  + a18n('7. 尝试重启设备后重新检测');
-const networkFailAttention = a18n('1. 请检查设备是否联网<br>')
-  + a18n('2. 请刷新网页后再次检测<br>')
-  + a18n('3. 请尝试更换网络后再次检测');
-
 export default function DeviceConnect({ stepNameList, startDeviceDetect }) {
   const [progress, setProgress] = useState(0);
   const [deviceState, setDeviceState] = useState({});
@@ -34,6 +23,17 @@ export default function DeviceConnect({ stepNameList, startDeviceDetect }) {
   const hasMicrophoneDetect = stepNameList.indexOf('microphone') >= 0;
   const hasSpeakerDetect = stepNameList.indexOf('speaker') >= 0;
   const hasNetworkDetect = stepNameList.indexOf('network') >= 0;
+
+  const deviceFailAttention = a18n('1. 若浏览器弹出提示，请选择“允许”<br>')
+  + a18n('2. 若杀毒软件弹出提示，请选择“允许”<br>')
+  + a18n('3. 检查系统设置，允许浏览器访问摄像头及麦克风<br>')
+  + a18n('4. 检查浏览器设置，允许网页访问摄像头及麦克风<br>')
+  + a18n('5. 检查摄像头/麦克风是否正确连接并开启<br>')
+  + a18n('6. 尝试重新连接摄像头/麦克风<br>')
+  + a18n('7. 尝试重启设备后重新检测');
+  const networkFailAttention = a18n('1. 请检查设备是否联网<br>')
+    + a18n('2. 请刷新网页后再次检测<br>')
+    + a18n('3. 请尝试更换网络后再次检测');
 
   useEffect(() => {
     getDeviceConnectResult();
@@ -65,6 +65,26 @@ export default function DeviceConnect({ stepNameList, startDeviceDetect }) {
     setShowConnectResult(false);
   };
 
+  const getPrepareConnectInfo = () => {
+    const deviceDetectList = [];
+    hasCameraDetect && deviceDetectList.push(a18n('摄像头'));
+    hasMicrophoneDetect && deviceDetectList.push(a18n('麦克风'));
+    hasSpeakerDetect && deviceDetectList.push(a18n('扬声器'));
+    hasNetworkDetect && deviceDetectList.push(a18n('网络'));
+    let deviceDetectInfo = '';
+    if (deviceDetectList.length === 1) {
+      [deviceDetectInfo] = deviceDetectList;
+    }
+    if (deviceDetectList.length === 2) {
+      deviceDetectInfo = `${deviceDetectList[0]}${a18n('和')}${deviceDetectList[1]}`;
+    }
+    if (deviceDetectList.length > 2) {
+      const [lastDetectInfo] = deviceDetectList.splice(deviceDetectList.length - 1, 1);
+      deviceDetectInfo = `${deviceDetectList.join(a18n('分隔符'))}${a18n('和')}${lastDetectInfo}`;
+    }
+    return a18n`设备检测前请确认设备连接了${deviceDetectInfo}`;
+  };
+
   const getDeviceConnectResult = async () => {
     let cameraList = [];
     let micList = [];
@@ -92,7 +112,14 @@ export default function DeviceConnect({ stepNameList, startDeviceDetect }) {
     setDeviceState(deviceStateObj);
     setConnectResult(getDeviceConnectInfo(deviceStateObj));
 
-    if (hasCameraDevice) {
+    if (!hasCameraDetect) {
+      deviceStateObj = {
+        ...deviceStateObj,
+        hasCameraConnect: true,
+      };
+      setDeviceState(deviceStateObj);
+    }
+    if (hasCameraDetect && hasCameraDevice) {
       navigator.mediaDevices
         .getUserMedia({ video: true, audio: false })
         .then((stream) => {
@@ -186,7 +213,7 @@ export default function DeviceConnect({ stepNameList, startDeviceDetect }) {
       <div className="testing-title">{a18n('设备连接')}</div>
       <div className="testing-prepare-info">
       {
-        a18n`设备检测前请确认设备连接了${hasCameraDetect ? a18n('摄像头') : ''}${hasMicrophoneDetect ? a18n('、麦克风') : ''}${hasSpeakerDetect ? a18n('、扬声器') : ''}${hasNetworkDetect ? a18n('和网络') : ''}`
+        getPrepareConnectInfo()
       }
       </div>
       <div className="device-display">

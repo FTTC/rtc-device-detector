@@ -9,6 +9,44 @@
   TRTC = TRTC && Object.prototype.hasOwnProperty.call(TRTC, 'default') ? TRTC['default'] : TRTC;
   RTCDetect = RTCDetect && Object.prototype.hasOwnProperty.call(RTCDetect, 'default') ? RTCDetect['default'] : RTCDetect;
 
+  function ownKeys(object, enumerableOnly) {
+    var keys = Object.keys(object);
+
+    if (Object.getOwnPropertySymbols) {
+      var symbols = Object.getOwnPropertySymbols(object);
+
+      if (enumerableOnly) {
+        symbols = symbols.filter(function (sym) {
+          return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+        });
+      }
+
+      keys.push.apply(keys, symbols);
+    }
+
+    return keys;
+  }
+
+  function _objectSpread2(target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i] != null ? arguments[i] : {};
+
+      if (i % 2) {
+        ownKeys(Object(source), true).forEach(function (key) {
+          _defineProperty(target, key, source[key]);
+        });
+      } else if (Object.getOwnPropertyDescriptors) {
+        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+      } else {
+        ownKeys(Object(source)).forEach(function (key) {
+          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+        });
+      }
+    }
+
+    return target;
+  }
+
   function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
     try {
       var info = gen[key](arg);
@@ -60,40 +98,6 @@
     return obj;
   }
 
-  function ownKeys(object, enumerableOnly) {
-    var keys = Object.keys(object);
-
-    if (Object.getOwnPropertySymbols) {
-      var symbols = Object.getOwnPropertySymbols(object);
-      if (enumerableOnly) symbols = symbols.filter(function (sym) {
-        return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-      });
-      keys.push.apply(keys, symbols);
-    }
-
-    return keys;
-  }
-
-  function _objectSpread2(target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i] != null ? arguments[i] : {};
-
-      if (i % 2) {
-        ownKeys(Object(source), true).forEach(function (key) {
-          _defineProperty(target, key, source[key]);
-        });
-      } else if (Object.getOwnPropertyDescriptors) {
-        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-      } else {
-        ownKeys(Object(source)).forEach(function (key) {
-          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-        });
-      }
-    }
-
-    return target;
-  }
-
   function _taggedTemplateLiteral(strings, raw) {
     if (!raw) {
       raw = strings.slice(0);
@@ -115,14 +119,17 @@
   }
 
   function _iterableToArrayLimit(arr, i) {
-    if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
+    var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
+
+    if (_i == null) return;
     var _arr = [];
     var _n = true;
     var _d = false;
-    var _e = undefined;
+
+    var _s, _e;
 
     try {
-      for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+      for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) {
         _arr.push(_s.value);
 
         if (i && _arr.length === i) break;
@@ -184,8 +191,13 @@
     return new Promise(function (resolve) {
       try {
         var xhr = new XMLHttpRequest();
+        var timeout = setTimeout(function () {
+          xhr.abort();
+          resolve(false);
+        }, 2000);
 
         xhr.onload = function () {
+          clearTimeout(timeout);
           resolve(true);
         };
 
@@ -316,8 +328,6 @@
   }));
 
   var _templateObject, _templateObject2;
-  var deviceFailAttention = a18n('1. 若浏览器弹出提示，请选择“允许”<br>') + a18n('2. 若杀毒软件弹出提示，请选择“允许”<br>') + a18n('3. 检查系统设置，允许浏览器访问摄像头及麦克风<br>') + a18n('4. 检查浏览器设置，允许网页访问摄像头及麦克风<br>') + a18n('5. 检查摄像头/麦克风是否正确连接并开启<br>') + a18n('6. 尝试重新连接摄像头/麦克风<br>') + a18n('7. 尝试重启设备后重新检测');
-  var networkFailAttention = a18n('1. 请检查设备是否联网<br>') + a18n('2. 请刷新网页后再次检测<br>') + a18n('3. 请尝试更换网络后再次检测');
   function DeviceConnect(_ref) {
     var stepNameList = _ref.stepNameList,
         startDeviceDetect = _ref.startDeviceDetect;
@@ -351,6 +361,8 @@
     var hasMicrophoneDetect = stepNameList.indexOf('microphone') >= 0;
     var hasSpeakerDetect = stepNameList.indexOf('speaker') >= 0;
     var hasNetworkDetect = stepNameList.indexOf('network') >= 0;
+    var deviceFailAttention = a18n('1. 若浏览器弹出提示，请选择“允许”<br>') + a18n('2. 若杀毒软件弹出提示，请选择“允许”<br>') + a18n('3. 检查系统设置，允许浏览器访问摄像头及麦克风<br>') + a18n('4. 检查浏览器设置，允许网页访问摄像头及麦克风<br>') + a18n('5. 检查摄像头/麦克风是否正确连接并开启<br>') + a18n('6. 尝试重新连接摄像头/麦克风<br>') + a18n('7. 尝试重启设备后重新检测');
+    var networkFailAttention = a18n('1. 请检查设备是否联网<br>') + a18n('2. 请刷新网页后再次检测<br>') + a18n('3. 请尝试更换网络后再次检测');
     React.useEffect(function () {
       getDeviceConnectResult();
       return function () {
@@ -383,6 +395,33 @@
       setProgress(0);
       setConnectResult({});
       setShowConnectResult(false);
+    };
+
+    var getPrepareConnectInfo = function getPrepareConnectInfo() {
+      var deviceDetectList = [];
+      hasCameraDetect && deviceDetectList.push(a18n('摄像头'));
+      hasMicrophoneDetect && deviceDetectList.push(a18n('麦克风'));
+      hasSpeakerDetect && deviceDetectList.push(a18n('扬声器'));
+      hasNetworkDetect && deviceDetectList.push(a18n('网络'));
+      var deviceDetectInfo = '';
+
+      if (deviceDetectList.length === 1) {
+        deviceDetectInfo = deviceDetectList[0];
+      }
+
+      if (deviceDetectList.length === 2) {
+        deviceDetectInfo = "".concat(deviceDetectList[0]).concat(a18n('和')).concat(deviceDetectList[1]);
+      }
+
+      if (deviceDetectList.length > 2) {
+        var _deviceDetectList$spl = deviceDetectList.splice(deviceDetectList.length - 1, 1),
+            _deviceDetectList$spl2 = _slicedToArray(_deviceDetectList$spl, 1),
+            lastDetectInfo = _deviceDetectList$spl2[0];
+
+        deviceDetectInfo = "".concat(deviceDetectList.join(a18n('分隔符'))).concat(a18n('和')).concat(lastDetectInfo);
+      }
+
+      return a18n(_templateObject || (_templateObject = _taggedTemplateLiteral(["\u8BBE\u5907\u68C0\u6D4B\u524D\u8BF7\u786E\u8BA4\u8BBE\u5907\u8FDE\u63A5\u4E86", ""])), deviceDetectInfo);
     };
 
     var getDeviceConnectResult = /*#__PURE__*/function () {
@@ -454,7 +493,14 @@
                 setDeviceState(deviceStateObj);
                 setConnectResult(getDeviceConnectInfo(deviceStateObj));
 
-                if (hasCameraDevice) {
+                if (!hasCameraDetect) {
+                  deviceStateObj = _objectSpread2(_objectSpread2({}, deviceStateObj), {}, {
+                    hasCameraConnect: true
+                  });
+                  setDeviceState(deviceStateObj);
+                }
+
+                if (hasCameraDetect && hasCameraDevice) {
                   navigator.mediaDevices.getUserMedia({
                     video: true,
                     audio: false
@@ -490,7 +536,7 @@
                   });
                 }
 
-              case 34:
+              case 35:
               case "end":
                 return _context.stop();
             }
@@ -521,7 +567,7 @@
 
 
       if (!(deviceState.hasCameraDevice && deviceState.hasMicrophoneDevice && deviceState.hasSpeakerDevice)) {
-        connectInfo = a18n(_templateObject || (_templateObject = _taggedTemplateLiteral(["\u672A\u68C0\u6D4B\u5230", "", "", "\u8BBE\u5907\uFF0C\u8BF7\u68C0\u67E5\u8BBE\u5907\u8FDE\u63A5"])), deviceState.hasCameraDevice ? '' : a18n('【摄像头】'), deviceState.hasMicrophoneDevice ? '' : a18n('【麦克风】'), deviceState.hasSpeakerDevice ? '' : a18n('【扬声器】'));
+        connectInfo = a18n(_templateObject2 || (_templateObject2 = _taggedTemplateLiteral(["\u672A\u68C0\u6D4B\u5230", "", "", "\u8BBE\u5907\uFF0C\u8BF7\u68C0\u67E5\u8BBE\u5907\u8FDE\u63A5"])), deviceState.hasCameraDevice ? '' : a18n('【摄像头】'), deviceState.hasMicrophoneDevice ? '' : a18n('【麦克风】'), deviceState.hasSpeakerDevice ? '' : a18n('【扬声器】'));
         return {
           info: connectInfo,
           success: false
@@ -560,7 +606,7 @@
       className: "testing-title"
     }, a18n('设备连接')), /*#__PURE__*/React__default.createElement("div", {
       className: "testing-prepare-info"
-    }, a18n(_templateObject2 || (_templateObject2 = _taggedTemplateLiteral(["\u8BBE\u5907\u68C0\u6D4B\u524D\u8BF7\u786E\u8BA4\u8BBE\u5907\u8FDE\u63A5\u4E86", "", "", "", ""])), hasCameraDetect ? a18n('摄像头') : '', hasMicrophoneDetect ? a18n('、麦克风') : '', hasSpeakerDetect ? a18n('、扬声器') : '', hasNetworkDetect ? a18n('和网络') : '')), /*#__PURE__*/React__default.createElement("div", {
+    }, getPrepareConnectInfo()), /*#__PURE__*/React__default.createElement("div", {
       className: "device-display"
     }, stepNameList.map(function (stepName, index) {
       if (stepName === 'camera') {
@@ -1543,7 +1589,7 @@
       className: "testing-title"
     }, a18n('检测报告')), /*#__PURE__*/React__default.createElement("div", {
       className: "device-report-list"
-    }, /*#__PURE__*/React__default.createElement("div", {
+    }, reportData.camera && /*#__PURE__*/React__default.createElement("div", {
       className: "device-report"
     }, /*#__PURE__*/React__default.createElement("div", {
       className: "device-info"
@@ -1627,11 +1673,11 @@
     下行网络质量: 'Downlink network quality',
     重新检测: 'Retest',
     完成检测: 'Done',
-    '1. 若浏览器弹出提示，请选择“允许”<br>': '1. If a prompt pops up in the browser, please select "allow"<br>',
-    '2. 若杀毒软件弹出提示，请选择“允许”<br>': '2. If the anti-virus software pops up a prompt, please select "allow"<br>',
-    '3. 检查系统设置，允许浏览器访问摄像头及麦克风<br>': '3. Check the system settings and allow the browser to access the camera and microphone<br>',
-    '4. 检查浏览器设置，允许网页访问摄像头及麦克风<br>': '4. Check the browser settings to allow web access to the camera and microphone<br>',
-    '5. 检查摄像头/麦克风是否正确连接并开启<br>': '5. Check that the camera / microphone is properly connected and turned on<br>',
+    '1. 若浏览器弹出提示，请选择“允许”<br>': '1. If a prompt pops up in the browser, please <br>select "allow"<br>',
+    '2. 若杀毒软件弹出提示，请选择“允许”<br>': '2. If the anti-virus software pops up a prompt, <br>please select "allow"<br>',
+    '3. 检查系统设置，允许浏览器访问摄像头及麦克风<br>': '3. Check the system settings and allow the browser <br>to access the camera and microphone<br>',
+    '4. 检查浏览器设置，允许网页访问摄像头及麦克风<br>': '4. Check the browser settings to allow web access <br>to the camera and microphone<br>',
+    '5. 检查摄像头/麦克风是否正确连接并开启<br>': '5. Check that the camera / microphone is properly <br>connected and turned on<br>',
     '6. 尝试重新连接摄像头/麦克风<br>': '6. Try reconnecting the camera / microphone<br>',
     '7. 尝试重启设备后重新检测': '7. Test again after trying to restart the device',
     '1. 请检查设备是否联网<br>': '1. Please check whether the device is connected to the Internet<br>',
@@ -1648,11 +1694,13 @@
     '请允许浏览器及网页访问摄像头/麦克风设备，并检查网络连接': 'Please allow browsers and web pages to access the camera / microphone device and check the network connection',
     '网络连接失败，请检查网络连接': 'Network connection failed. Please check the network connection',
     设备连接: 'Device Connection',
-    '设备检测前请确认设备连接了%1%2%3%4': 'Please make sure %1%2%3 %4 is connected before testing',
+    '设备检测前请确认设备连接了%s': 'Please make sure %s is connected before testing',
     摄像头: 'camera',
-    '、麦克风': ', microphone',
-    '、扬声器': ', speaker',
-    和网络: 'and network',
+    麦克风: 'microphone',
+    扬声器: 'speaker',
+    网络: 'network',
+    和: ' and ',
+    分隔符: ', ',
     '设备正在连接中，请稍后': 'The device is connecting, please wait...',
     开始检测: 'Start testing',
     重新连接: 'Reconnecting',
@@ -1684,7 +1732,11 @@
     '用户/系统已拒绝授权访问摄像头或麦克风': 'The user / system has denied access to the camera or microphone',
     找不到摄像头或麦克风设备: 'Camera or microphone device not found',
     '采集属性设置错误，如果您指定了 cameraId/microphoneId，请确保它们是一个有效的非空字符串': 'Collection property setting error, if you specified cameraId / microphoneId, please make sure they are a valid non empty string',
-    '初始化本地流时遇到未知错误, 请重试': 'An unknown error was encountered while initializing the local stream. Please try again'
+    '初始化本地流时遇到未知错误, 请重试': 'An unknown error was encountered while initializing the local stream. Please try again',
+    camera: 'CAMERA',
+    microphone: 'MICROPHONE',
+    speaker: 'SPEAKER',
+    network: 'NETWORK'
   };
 
   var zh = {
@@ -1721,11 +1773,13 @@
     '请允许浏览器及网页访问摄像头/麦克风设备，并检查网络连接': '请允许浏览器及网页访问摄像头/麦克风设备，并检查网络连接',
     '网络连接失败，请检查网络连接': '网络连接失败，请检查网络连接',
     设备连接: '设备连接',
-    '设备检测前请确认设备连接了%1%2%3%4': '设备检测前请确认设备连接了%1%2%3%4',
+    '设备检测前请确认设备连接了%s': '设备检测前请确认设备连接了%s',
     摄像头: '摄像头',
-    '、麦克风': '、麦克风',
-    '、扬声器': '、扬声器',
-    和网络: '和网络',
+    麦克风: '麦克风',
+    扬声器: '扬声器',
+    网络: '网络',
+    和: '和',
+    分隔符: '、',
     '设备正在连接中，请稍后': '设备正在连接中，请稍后',
     开始检测: '开始检测',
     重新连接: '重新连接',
@@ -1757,7 +1811,11 @@
     '用户/系统已拒绝授权访问摄像头或麦克风': '用户/系统已拒绝授权访问摄像头或麦克风',
     找不到摄像头或麦克风设备: '找不到摄像头或麦克风设备',
     '采集属性设置错误，如果您指定了 cameraId/microphoneId，请确保它们是一个有效的非空字符串': '采集属性设置错误，如果您指定了 cameraId/microphoneId，请确保它们是一个有效的非空字符串',
-    '初始化本地流时遇到未知错误, 请重试': '初始化本地流时遇到未知错误, 请重试'
+    '初始化本地流时遇到未知错误, 请重试': '初始化本地流时遇到未知错误, 请重试',
+    camera: '摄像头',
+    microphone: '麦克风',
+    speaker: '扬声器',
+    network: '网络'
   };
 
   a18n.addLocaleResource('en', en);
@@ -1771,6 +1829,8 @@
         lang = _ref$lang === void 0 ? 'zh-CN' : _ref$lang,
         _ref$audioUrl = _ref.audioUrl,
         audioUrl = _ref$audioUrl === void 0 ? '' : _ref$audioUrl,
+        _ref$hasCameraDetect = _ref.hasCameraDetect,
+        hasCameraDetect = _ref$hasCameraDetect === void 0 ? true : _ref$hasCameraDetect,
         _ref$hasNetworkDetect = _ref.hasNetworkDetect,
         hasNetworkDetect = _ref$hasNetworkDetect === void 0 ? true : _ref$hasNetworkDetect,
         networkDetectInfo = _ref.networkDetectInfo;
@@ -1808,9 +1868,14 @@
     }, [lang]);
     var detect = new RTCDetect();
     var result = detect.getSystem();
-    var stepNameList = ['camera', 'microphone', 'speaker', 'network']; // iOS系统和firefox浏览器，不包含扬声器检测
+    var stepNameList = ['camera', 'microphone', 'speaker', 'network'];
 
-    if (result.browser.name === 'Firefox' || result.OS === 'iOS') {
+    if (!hasCameraDetect) {
+      stepNameList.indexOf('camera') >= 0 && stepNameList.splice(stepNameList.indexOf('camera'), 1);
+    } // iOS系统和firefox浏览器，不包含扬声器检测
+
+
+    if (['Firefox', 'Safari'].indexOf(result.browser.name) > -1 || result.OS === 'iOS') {
       stepNameList.indexOf('speaker') >= 0 && stepNameList.splice(stepNameList.indexOf('speaker'), 1);
     }
 
@@ -1926,7 +1991,7 @@
         className: "step-icon"
       }, label === 'camera' && CameraIcon, label === 'microphone' && MicIcon, label === 'speaker' && SpeakerIcon, label === 'network' && NetworkIcon), /*#__PURE__*/React__default.createElement("span", {
         className: "step-label"
-      }, label.toUpperCase()));
+      }, a18n(label)));
     })), detectStage === 1 && /*#__PURE__*/React__default.createElement("div", {
       className: "testing-container"
     }, stepNameList.map(function (step, index) {
