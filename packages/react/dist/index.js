@@ -395,6 +395,7 @@
       setProgress(0);
       setConnectResult({});
       setShowConnectResult(false);
+      getDeviceConnectResult();
     };
 
     var getPrepareConnectInfo = function getPrepareConnectInfo() {
@@ -1284,6 +1285,11 @@
         setCount = _useState4[1];
 
     React.useEffect(function () {
+      return function () {
+        setDetectorInfo({});
+      };
+    }, []);
+    React.useEffect(function () {
       if (activeDetector === currentDetector$3 && count !== 0) {
         setCount(15);
         getDetectorInfo();
@@ -1304,6 +1310,39 @@
         downlinkClient && downlinkClient.leave();
       }
     }, [count]);
+    var showRttValue = React.useMemo(function () {
+      if (typeof detectorInfo.rtt === 'undefined') {
+        return '';
+      }
+
+      if (detectorInfo.rtt === 0) {
+        return a18n('未知');
+      }
+
+      return "".concat(detectorInfo.rtt, "ms");
+    }, [detectorInfo.rtt]);
+
+    var isWebRTCSupported = function isWebRTCSupported() {
+      var apiList = ['RTCPeerConnection', 'webkitRTCPeerConnection', 'RTCIceGatherer'];
+      return apiList.filter(function (api) {
+        return api in window;
+      }).length > 0;
+    };
+
+    var isUserMediaSupported = function isUserMediaSupported() {
+      if (!navigator.mediaDevices) {
+        return false;
+      }
+
+      var apiList = ['getUserMedia', 'enumerateDevices'];
+      return apiList.filter(function (api) {
+        return api in navigator.mediaDevices;
+      }).length === apiList.length;
+    };
+
+    var isWebSocketSupported = function isWebSocketSupported() {
+      return 'WebSocket' in window && 2 === window.WebSocket.CLOSING;
+    };
 
     var getDetectorInfo = /*#__PURE__*/function () {
       var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
@@ -1314,16 +1353,12 @@
               case 0:
                 detect = new RTCDetect();
                 systemResult = detect.getSystem();
-                _context.next = 4;
-                return detect.isTRTCSupported();
-
-              case 4:
-                webRTCSupportResult = _context.sent;
+                webRTCSupportResult = isWebRTCSupported && isUserMediaSupported && isWebSocketSupported;
                 APISupportResult = detect.getAPISupported();
                 detectorInfo = {
                   system: systemResult.OS,
                   browser: "".concat(systemResult.browser.name, " ").concat(systemResult.browser.version),
-                  TRTCSupport: webRTCSupportResult.result ? a18n('支持') : a18n('不支持'),
+                  TRTCSupport: webRTCSupportResult ? a18n('支持') : a18n('不支持'),
                   screenMediaSupport: APISupportResult.isScreenCaptureAPISupported ? a18n('支持') : a18n('不支持')
                 };
                 setDetectorInfo(detectorInfo);
@@ -1342,7 +1377,7 @@
                 testUplinkNetworkQuality();
                 testDownlinkNetworkQuality();
 
-              case 11:
+              case 9:
               case "end":
                 return _context.stop();
             }
@@ -1375,7 +1410,7 @@
                 });
                 uplinkStream = TRTC.createStream({
                   audio: true,
-                  video: true
+                  video: false
                 });
                 _context3.next = 6;
                 return uplinkStream.initialize();
@@ -1533,6 +1568,21 @@
         rtt: rttAverageQuality
       });
 
+      if (networkTestingResult.uplinkNetworkQualities.length === 0) {
+        detectorResultInfo.uplinkQuality = 0;
+      }
+
+      if (networkTestingResult.downlinkNetworkQualities.length === 0) {
+        detectorResultInfo.downlinkQuality = 0;
+      }
+
+      if (networkTestingResult.rttList.length === 0) {
+        detectorResultInfo.rtt = 0;
+      }
+
+      networkTestingResult.uplinkNetworkQualities = [];
+      networkTestingResult.downlinkNetworkQualities = [];
+      networkTestingResult.rttList = [];
       handleCompleted('success', detectorResultInfo);
       setDetectorInfo(detectorResultInfo);
     };
@@ -1560,8 +1610,8 @@
     }, detectorInfo.screenMediaSupport)), /*#__PURE__*/React__default.createElement("div", {
       className: "testing-item-container"
     }, /*#__PURE__*/React__default.createElement("div", null, a18n('网络延时')), /*#__PURE__*/React__default.createElement("div", {
-      className: !detectorInfo.rtt ? 'network-loading' : ''
-    }, detectorInfo.rtt ? "".concat(detectorInfo.rtt, "ms") : '')), /*#__PURE__*/React__default.createElement("div", {
+      className: typeof detectorInfo.rtt === 'undefined' ? 'network-loading' : ''
+    }, showRttValue)), /*#__PURE__*/React__default.createElement("div", {
       className: "testing-item-container"
     }, /*#__PURE__*/React__default.createElement("div", null, a18n('上行网络质量')), /*#__PURE__*/React__default.createElement("div", {
       className: !NETWORK_QUALITY[detectorInfo.uplinkQuality] ? 'network-loading' : ''
@@ -1583,6 +1633,13 @@
     var reportData = _ref.reportData,
         handleReset = _ref.handleReset,
         handleClose = _ref.handleClose;
+    var showRttValue = React.useMemo(function () {
+      if (reportData.network.result.rtt === 0) {
+        return a18n('未知');
+      }
+
+      return "".concat(reportData.network.result.rtt, "ms");
+    }, [reportData.network.result.rtt]);
     return /*#__PURE__*/React__default.createElement("div", {
       className: "device-testing-report"
     }, /*#__PURE__*/React__default.createElement("div", {
@@ -1628,8 +1685,8 @@
     }, NetworkIcon), /*#__PURE__*/React__default.createElement("div", {
       className: "device-name"
     }, a18n('网络延时'))), /*#__PURE__*/React__default.createElement("div", {
-      className: "".concat(reportData.network.result.rtt <= 200 ? 'green' : 'red')
-    }, "".concat(reportData.network.result.rtt, "ms"))), reportData.network && /*#__PURE__*/React__default.createElement("div", {
+      className: "".concat(reportData.network.result.rtt > 0 && reportData.network.result.rtt <= 200 ? 'green' : 'red')
+    }, showRttValue)), reportData.network && /*#__PURE__*/React__default.createElement("div", {
       className: "device-report"
     }, /*#__PURE__*/React__default.createElement("div", {
       className: "device-info"

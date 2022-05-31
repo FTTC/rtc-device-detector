@@ -63,6 +63,7 @@ export default function DeviceConnect({ stepNameList, startDeviceDetect }) {
     setProgress(0);
     setConnectResult({});
     setShowConnectResult(false);
+    getDeviceConnectResult();
   };
 
   const getPrepareConnectInfo = () => {
