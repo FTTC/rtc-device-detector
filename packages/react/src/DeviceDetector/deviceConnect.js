@@ -97,8 +97,8 @@ export default function DeviceConnect({ stepNameList, startDeviceDetect }) {
     } catch (error) {
       console.log('rtc-device-detector getDeviceList error', error);
     }
-    const hasCameraDevice = cameraList.length > 0;
-    const hasMicrophoneDevice = micList.length > 0;
+    const hasCameraDevice = hasCameraDetect ? cameraList.length > 0 : true;
+    const hasMicrophoneDevice = hasMicrophoneDetect ? micList.length > 0 : true;
     const hasSpeakerDevice = hasSpeakerDetect ? speakerList.length > 0 : true;
     const hasNetworkConnect = hasNetworkDetect ? await isOnline() : true;
     let deviceStateObj = {
@@ -106,20 +106,13 @@ export default function DeviceConnect({ stepNameList, startDeviceDetect }) {
       hasMicrophoneDevice,
       hasSpeakerDevice,
       hasNetworkConnect,
-      hasCameraConnect: false,
-      hasMicrophoneConnect: false,
+      hasCameraConnect: !hasCameraDetect,
+      hasMicrophoneConnect: !hasMicrophoneDetect,
       hasSpeakerConnect: hasSpeakerDevice,
     };
     setDeviceState(deviceStateObj);
     setConnectResult(getDeviceConnectInfo(deviceStateObj));
 
-    if (!hasCameraDetect) {
-      deviceStateObj = {
-        ...deviceStateObj,
-        hasCameraConnect: true,
-      };
-      setDeviceState(deviceStateObj);
-    }
     if (hasCameraDetect && hasCameraDevice) {
       navigator.mediaDevices
         .getUserMedia({ video: true, audio: false })
@@ -139,7 +132,7 @@ export default function DeviceConnect({ stepNameList, startDeviceDetect }) {
         });
     }
 
-    if (hasMicrophoneDevice) {
+    if (hasMicrophoneDetect && hasMicrophoneDevice) {
       navigator.mediaDevices
         .getUserMedia({ video: false, audio: hasMicrophoneDevice })
         .then((stream) => {
@@ -185,9 +178,24 @@ export default function DeviceConnect({ stepNameList, startDeviceDetect }) {
     }
     // 第二步：浏览器未拿到摄像头/麦克风权限的提示
     if (!(deviceState.hasCameraConnect && deviceState.hasMicrophoneConnect)) {
+      const deviceList = [];
+      let deviceInfo = '';
+      if (!deviceState.hasCameraConnect) {
+        deviceList.push(a18n('摄像头'));
+      }
+      if (!deviceState.hasMicrophoneConnect) {
+        deviceList.push(a18n('麦克风'));
+      }
+      if (deviceList.length === 1) {
+        [deviceInfo] = deviceList;
+      } else if (deviceList.length > 1) {
+        deviceInfo = deviceList.join(a18n('和'));
+      }
+
       connectInfo = deviceState.hasNetworkConnect
-        ? a18n('请允许浏览器及网页访问摄像头/麦克风设备')
-        : a18n('请允许浏览器及网页访问摄像头/麦克风设备，并检查网络连接');
+        ? a18n`请允许浏览器及网页访问${deviceInfo}设备`
+        : a18n`请允许浏览器及网页访问${deviceInfo}设备，并检查网络连接`;
+
       return {
         info: connectInfo,
         success: false,

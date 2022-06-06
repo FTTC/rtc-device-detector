@@ -327,7 +327,7 @@
     "p-id": "3224"
   }));
 
-  var _templateObject, _templateObject2;
+  var _templateObject, _templateObject2, _templateObject3, _templateObject4;
   function DeviceConnect(_ref) {
     var stepNameList = _ref.stepNameList,
         startDeviceDetect = _ref.startDeviceDetect;
@@ -460,8 +460,8 @@
                 console.log('rtc-device-detector getDeviceList error', _context.t0);
 
               case 18:
-                hasCameraDevice = cameraList.length > 0;
-                hasMicrophoneDevice = micList.length > 0;
+                hasCameraDevice = hasCameraDetect ? cameraList.length > 0 : true;
+                hasMicrophoneDevice = hasMicrophoneDetect ? micList.length > 0 : true;
                 hasSpeakerDevice = hasSpeakerDetect ? speakerList.length > 0 : true;
 
                 if (!hasNetworkDetect) {
@@ -487,19 +487,12 @@
                   hasMicrophoneDevice: hasMicrophoneDevice,
                   hasSpeakerDevice: hasSpeakerDevice,
                   hasNetworkConnect: hasNetworkConnect,
-                  hasCameraConnect: false,
-                  hasMicrophoneConnect: false,
+                  hasCameraConnect: !hasCameraDetect,
+                  hasMicrophoneConnect: !hasMicrophoneDetect,
                   hasSpeakerConnect: hasSpeakerDevice
                 };
                 setDeviceState(deviceStateObj);
                 setConnectResult(getDeviceConnectInfo(deviceStateObj));
-
-                if (!hasCameraDetect) {
-                  deviceStateObj = _objectSpread2(_objectSpread2({}, deviceStateObj), {}, {
-                    hasCameraConnect: true
-                  });
-                  setDeviceState(deviceStateObj);
-                }
 
                 if (hasCameraDetect && hasCameraDevice) {
                   navigator.mediaDevices.getUserMedia({
@@ -519,7 +512,7 @@
                   });
                 }
 
-                if (hasMicrophoneDevice) {
+                if (hasMicrophoneDetect && hasMicrophoneDevice) {
                   navigator.mediaDevices.getUserMedia({
                     video: false,
                     audio: hasMicrophoneDevice
@@ -537,7 +530,7 @@
                   });
                 }
 
-              case 35:
+              case 34:
               case "end":
                 return _context.stop();
             }
@@ -577,7 +570,24 @@
 
 
       if (!(deviceState.hasCameraConnect && deviceState.hasMicrophoneConnect)) {
-        connectInfo = deviceState.hasNetworkConnect ? a18n('请允许浏览器及网页访问摄像头/麦克风设备') : a18n('请允许浏览器及网页访问摄像头/麦克风设备，并检查网络连接');
+        var deviceList = [];
+        var deviceInfo = '';
+
+        if (!deviceState.hasCameraConnect) {
+          deviceList.push(a18n('摄像头'));
+        }
+
+        if (!deviceState.hasMicrophoneConnect) {
+          deviceList.push(a18n('麦克风'));
+        }
+
+        if (deviceList.length === 1) {
+          deviceInfo = deviceList[0];
+        } else if (deviceList.length > 1) {
+          deviceInfo = deviceList.join(a18n('和'));
+        }
+
+        connectInfo = deviceState.hasNetworkConnect ? a18n(_templateObject3 || (_templateObject3 = _taggedTemplateLiteral(["\u8BF7\u5141\u8BB8\u6D4F\u89C8\u5668\u53CA\u7F51\u9875\u8BBF\u95EE", "\u8BBE\u5907"])), deviceInfo) : a18n(_templateObject4 || (_templateObject4 = _taggedTemplateLiteral(["\u8BF7\u5141\u8BB8\u6D4F\u89C8\u5668\u53CA\u7F51\u9875\u8BBF\u95EE", "\u8BBE\u5907\uFF0C\u5E76\u68C0\u67E5\u7F51\u7EDC\u8FDE\u63A5"])), deviceInfo);
         return {
           info: connectInfo,
           success: false,
@@ -1747,8 +1757,8 @@
     '【摄像头】': 'camera',
     '【麦克风】': 'microphone',
     '【扬声器】': 'speaker',
-    '请允许浏览器及网页访问摄像头/麦克风设备': 'Please allow browser and web access to the camera / microphone device',
-    '请允许浏览器及网页访问摄像头/麦克风设备，并检查网络连接': 'Please allow browsers and web pages to access the camera / microphone device and check the network connection',
+    '请允许浏览器及网页访问%s设备': 'Please allow browser and web access to the %s device',
+    '请允许浏览器及网页访问%s设备，并检查网络连接': 'Please allow browsers and web pages to access the %s device and check the network connection',
     '网络连接失败，请检查网络连接': 'Network connection failed. Please check the network connection',
     设备连接: 'Device Connection',
     '设备检测前请确认设备连接了%s': 'Please make sure %s is connected before testing',
@@ -1826,8 +1836,8 @@
     '【摄像头】': '【摄像头】',
     '【麦克风】': '【麦克风】',
     '【扬声器】': '【扬声器】',
-    '请允许浏览器及网页访问摄像头/麦克风设备': '请允许浏览器及网页访问摄像头/麦克风设备',
-    '请允许浏览器及网页访问摄像头/麦克风设备，并检查网络连接': '请允许浏览器及网页访问摄像头/麦克风设备，并检查网络连接',
+    '请允许浏览器及网页访问%s设备': '请允许浏览器及网页访问%s设备',
+    '请允许浏览器及网页访问%s设备，并检查网络连接': '请允许浏览器及网页访问%s设备，并检查网络连接',
     '网络连接失败，请检查网络连接': '网络连接失败，请检查网络连接',
     设备连接: '设备连接',
     '设备检测前请确认设备连接了%s': '设备检测前请确认设备连接了%s',
