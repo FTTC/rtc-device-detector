@@ -1,6 +1,6 @@
 {
   "name": "rtc-device-detector-react",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "dist/index.js",
   "author": "xinlxinli",
   "license": "MIT",
@@ -25,7 +25,7 @@
   "dependencies": {
     "a18n": "^1.5.4",
     "rtc-detect": "^0.0.1",
-    "trtc-js-sdk": "^4.12.7"
+    "trtc-js-sdk": "^4.14.4"
   },
   "peerDependencies": {
     "react": ">=16.12.0",

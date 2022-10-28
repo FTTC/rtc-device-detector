@@ -1,4 +1,14 @@
 
+## Version 1.0.6 @2022.10.28
+
+**Fixed**
+
+- 修复 hasNetworkDetect 设置为 false 时，可能会引起的页面崩溃问题。
+
+**Note**
+
+- 升级 trtc-js-sdk 版本为 Version 4.14.4。
+
 ## Version 1.0.5 @2022.06.27
 
 **Updated**

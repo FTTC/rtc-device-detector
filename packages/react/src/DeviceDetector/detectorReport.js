@@ -1,15 +1,9 @@
 import a18n from 'a18n';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { CameraIcon, MicIcon, SpeakerIcon, NetworkIcon, NETWORK_QUALITY } from './utils';
 import Button from './base-components/button/button';
 
 export default function DetectorReport({ reportData, handleReset, handleClose }) {
-  const showRttValue = useMemo(() => {
-    if (reportData.network.result.rtt === 0) {
-      return a18n('未知');
-    }
-    return `${reportData.network.result.rtt}ms`;
-  }, [reportData.network.result.rtt]);
 
   return (
     <div className="device-testing-report">
@@ -64,7 +58,7 @@ export default function DetectorReport({ reportData, handleReset, handleClose })
                   <div className="device-name">{a18n('网络延时')}</div>
                 </div>
                 <div className={`${reportData.network.result.rtt > 0 && reportData.network.result.rtt <= 200 ? 'green' : 'red'}`}>
-                  {showRttValue}
+                  { reportData.network.result.rtt === 0 ? a18n('未知') : `${reportData.network.result.rtt}ms` }
                 </div>
               </div>
             )
