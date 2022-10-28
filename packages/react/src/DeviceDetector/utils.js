@@ -9,7 +9,12 @@ export function isOnline() {
   return new Promise((resolve) => {
     try {
       const xhr = new XMLHttpRequest();
+      const timeout = setTimeout(() => {
+        xhr.abort();
+        resolve(false);
+      }, 2000);
       xhr.onload = function () {
+        clearTimeout(timeout);
         resolve(true);
       };
       xhr.onerror = function () {

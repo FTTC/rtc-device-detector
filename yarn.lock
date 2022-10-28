@@ -12911,10 +12911,10 @@ trim-off-newlines@^1.0.0:
   resolved "https://registry.nlark.com/trim-off-newlines/download/trim-off-newlines-1.0.1.tgz#9f9ba9d9efa8764c387698bcbfeb2c848f11adb3"
   integrity sha1-n5up2e+odkw4dpi8v+sshI8RrbM=
 
-trtc-js-sdk@^4.11.1:
-  version "4.11.1"
-  resolved "https://registry.nlark.com/trtc-js-sdk/download/trtc-js-sdk-4.11.1.tgz#18747c49a36b85520f0b2af111446ae65b45b081"
-  integrity sha1-GHR8SaNrhVIPCyrxEURq5ltFsIE=
+trtc-js-sdk@^4.12.7:
+  version "4.14.4"
+  resolved "https://registry.yarnpkg.com/trtc-js-sdk/-/trtc-js-sdk-4.14.4.tgz#aa6855298749a4e397c3766c1fc96c1180620d43"
+  integrity sha512-Cv0bJjNpmszJSLSk9SDfW45E06+rNJo/mKUy7oTi4naNm5Wa92I1WEN94eGMcJ7ueX6pSKgdGKHz77k6+1rJsg==
 
 tryer@^1.0.1:
   version "1.0.1"
