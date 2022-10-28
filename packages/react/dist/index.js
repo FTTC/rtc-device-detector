@@ -1643,13 +1643,6 @@
     var reportData = _ref.reportData,
         handleReset = _ref.handleReset,
         handleClose = _ref.handleClose;
-    var showRttValue = React.useMemo(function () {
-      if (reportData.network.result.rtt === 0) {
-        return a18n('未知');
-      }
-
-      return "".concat(reportData.network.result.rtt, "ms");
-    }, [reportData.network.result.rtt]);
     return /*#__PURE__*/React__default.createElement("div", {
       className: "device-testing-report"
     }, /*#__PURE__*/React__default.createElement("div", {
@@ -1696,7 +1689,7 @@
       className: "device-name"
     }, a18n('网络延时'))), /*#__PURE__*/React__default.createElement("div", {
       className: "".concat(reportData.network.result.rtt > 0 && reportData.network.result.rtt <= 200 ? 'green' : 'red')
-    }, showRttValue)), reportData.network && /*#__PURE__*/React__default.createElement("div", {
+    }, reportData.network.result.rtt === 0 ? a18n('未知') : "".concat(reportData.network.result.rtt, "ms"))), reportData.network && /*#__PURE__*/React__default.createElement("div", {
       className: "device-report"
     }, /*#__PURE__*/React__default.createElement("div", {
       className: "device-info"
