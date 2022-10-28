@@ -2,7 +2,7 @@ rtc-device-detector-react 是腾讯云实时音视频 Web 端设备及网络检�
 
 ![img](https://sdk-web-1252463788.cos.ap-hongkong.myqcloud.com/trtc/webrtc/assets/rtc-device-detector.jpeg)
 
-### 安装
+## 安装
 
 ```bash
 yarn add rtc-device-detector-react
@@ -10,7 +10,7 @@ or
 npm install rtc-device-detector-react
 ```
 
-### 使用
+## 使用
 
 ```javascript
 import React, { useState, useEffect } from 'react';
@@ -48,7 +48,7 @@ export default () => {
 };
 ```
 
-### 参数
+## 参数
 
 | 参数              | 类型     | 说明                                                         |
 | :---------------- | :------- | :----------------------------------------------------------- |
@@ -56,10 +56,11 @@ export default () => {
 | onClose           | Function | 设备检测弹窗关闭的回调函数                                   |
 | lang              | String   | 'zh-CN'\|'en', 用来指定设备检测语言类型，默认为'zh-CN'（中文） |
 | audioUrl          | String   | 扬声器检测时播放的音频地址，默认为腾讯云实时音视频介绍语音。 |
+| hasCameraDetect   | Boolean  | 默认值为true, 是否包含摄像头检测（适用于语音通话检测场景）, 自 v1.0.5 版本支持               |
 | hasNetworkDetect  | Boolean  | 默认值为true, 是否包含网络检测                               |
 | networkDetectInfo | Object   | 网络检测进房参数，如hasNetworkDetect为false，则不需要传入networkDetectInfo |
 
-#### 网络检测参数说明
+### 网络检测参数说明
 
 | 属性                                               | 类型             | 说明                                                         |
 | :------------------------------------------------- | :--------------- | :----------------------------------------------------------- |
@@ -70,7 +71,11 @@ export default () => {
 | networkDetectInfo.downlinkUserInfo.downlinkUserId  | String           | 设备及网络检测下行 userId，注意务必与上行 userId 不相同      |
 | networkDetectInfo.downlinkUserInfo.downlinkUserSig | String           | 设备及网络检测下行 userSig                                   |
 
-### 网络检测说明
+## 扬声器检测说明
+
+Firefox、 Safari 浏览器以及 iOS 设备微信内置浏览器不支持获取扬声器列表，因此在以上浏览器中未做扬声器设备的检测。但扬声器依然可以正常使用的，浏览器会自动选择相关的扬声器设备用于播放声音。
+
+## 网络检测说明
 
 rtc-device-detector-react 使用两个不同用户进入同一个 TRTC 房间的方式检测当前用户到 TRTC 后台服务器之间的网络延时和网络质量等级，因此需要使用方传入 sdkAppId， roomId, userId 以及 userSig 信息。
 

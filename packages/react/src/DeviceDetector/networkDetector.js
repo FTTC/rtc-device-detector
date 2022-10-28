@@ -1,5 +1,5 @@
 import a18n from 'a18n';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Button from './base-components/button/button';
 import RTCDetect from 'rtc-detect';
 import TRTC from 'trtc-js-sdk';
@@ -19,6 +19,10 @@ let timer = null;
 export default function networkDetector({ activeDetector, networkDetectInfo, handleCompleted, generateReport }) {
   const [detectorInfo, setDetectorInfo] = useState({});
   const [count, setCount] = useState(15);
+
+  useEffect(() => () => {
+    setDetectorInfo({});
+  }, []);
 
   useEffect(() => {
     if (activeDetector === currentDetector && count !== 0) {
@@ -42,16 +46,41 @@ export default function networkDetector({ activeDetector, networkDetectInfo, han
     }
   }, [count]);
 
+  const showRttValue = useMemo(() => {
+    if (typeof detectorInfo.rtt === 'undefined') {
+      return '';
+    }
+    if (detectorInfo.rtt === 0) {
+      return a18n('未知');
+    }
+    return `${detectorInfo.rtt}ms`;
+  }, [detectorInfo.rtt]);
+
+  const isWebRTCSupported = () => {
+    const apiList = ['RTCPeerConnection', 'webkitRTCPeerConnection', 'RTCIceGatherer'];
+    return apiList.filter(api => api in window).length > 0;
+  };
+
+  const isUserMediaSupported = () => {
+    if (!navigator.mediaDevices) {
+      return false;
+    }
+    const apiList = ['getUserMedia', 'enumerateDevices'];
+    return apiList.filter(api => api in navigator.mediaDevices).length === apiList.length;
+  };
+
+  const isWebSocketSupported = () => 'WebSocket' in window && 2 === window.WebSocket.CLOSING;
+
   const getDetectorInfo = async () => {
     const detect = new RTCDetect();
     const systemResult = detect.getSystem();
-    const webRTCSupportResult = await detect.isTRTCSupported();
+    const webRTCSupportResult = isWebRTCSupported && isUserMediaSupported && isWebSocketSupported;
     const APISupportResult = detect.getAPISupported();
 
     const detectorInfo = {
       system: systemResult.OS,
       browser: `${systemResult.browser.name} ${systemResult.browser.version}`,
-      TRTCSupport: webRTCSupportResult.result ? a18n('支持') : a18n('不支持'),
+      TRTCSupport: webRTCSupportResult ? a18n('支持') : a18n('不支持'),
       screenMediaSupport: APISupportResult.isScreenCaptureAPISupported ? a18n('支持') : a18n('不支持'),
     };
     setDetectorInfo(detectorInfo);
@@ -83,7 +112,7 @@ export default function networkDetector({ activeDetector, networkDetectInfo, han
       useStringRoomId: typeof(roomId) === 'string',
     });
 
-    uplinkStream = TRTC.createStream({ audio: true, video: true });
+    uplinkStream = TRTC.createStream({ audio: true, video: false });
     await uplinkStream.initialize();
 
     uplinkClient.on('network-quality', async (event) => {
@@ -146,6 +175,18 @@ export default function networkDetector({ activeDetector, networkDetectInfo, han
       downlinkQuality: downlinkAverageQuality,
       rtt: rttAverageQuality,
     };
+    if (networkTestingResult.uplinkNetworkQualities.length === 0) {
+      detectorResultInfo.uplinkQuality = 0;
+    }
+    if (networkTestingResult.downlinkNetworkQualities.length === 0) {
+      detectorResultInfo.downlinkQuality = 0;
+    }
+    if (networkTestingResult.rttList.length === 0) {
+      detectorResultInfo.rtt = 0;
+    }
+    networkTestingResult.uplinkNetworkQualities = [];
+    networkTestingResult.downlinkNetworkQualities = [];
+    networkTestingResult.rttList = [];
     handleCompleted('success', detectorResultInfo);
     setDetectorInfo(detectorResultInfo);
   };
@@ -171,7 +212,7 @@ export default function networkDetector({ activeDetector, networkDetectInfo, han
         </div>
         <div className="testing-item-container">
           <div>{a18n('网络延时')}</div>
-          <div className={!detectorInfo.rtt ? 'network-loading' : ''}>{detectorInfo.rtt ? `${detectorInfo.rtt}ms` : ''}</div>
+          <div className={typeof detectorInfo.rtt === 'undefined' ? 'network-loading' : ''}>{showRttValue}</div>
         </div>
         <div className="testing-item-container">
           <div>{a18n('上行网络质量')}</div>

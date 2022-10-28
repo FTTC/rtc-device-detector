@@ -16,7 +16,7 @@ import zh from '../locales/zh-CN.js';
 a18n.addLocaleResource('en', en);
 a18n.addLocaleResource('zh-CN', zh);
 
-export default function DeviceDetector({ visible, onClose, lang = 'zh-CN', audioUrl = '', hasNetworkDetect = true, networkDetectInfo }) {
+export default function DeviceDetector({ visible, onClose, lang = 'zh-CN', audioUrl = '', hasCameraDetect = true, hasNetworkDetect = true, networkDetectInfo }) {
   const [open, setOpen] = useState(false);
   const [detectStage, setDetectStage] = useState(0);
   const [activeStep, setActiveStep] = useState(0);
@@ -35,8 +35,11 @@ export default function DeviceDetector({ visible, onClose, lang = 'zh-CN', audio
   const result = detect.getSystem();
 
   const stepNameList = ['camera', 'microphone', 'speaker', 'network'];
+  if (!hasCameraDetect) {
+    stepNameList.indexOf('camera') >= 0 && stepNameList.splice(stepNameList.indexOf('camera'), 1);
+  }
   // iOS系统和firefox浏览器，不包含扬声器检测
-  if (result.browser.name === 'Firefox' || result.OS === 'iOS') {
+  if (['Firefox', 'Safari'].indexOf(result.browser.name) > -1 || result.OS === 'iOS') {
     stepNameList.indexOf('speaker') >= 0 && stepNameList.splice(stepNameList.indexOf('speaker'), 1);
   }
   if (!hasNetworkDetect) {
@@ -153,7 +156,7 @@ export default function DeviceDetector({ visible, onClose, lang = 'zh-CN', audio
                   }
                 </span>
                 <span className="step-label">
-                  {label.toUpperCase()}
+                  {a18n(label)}
                 </span>
               </div>);
             })
