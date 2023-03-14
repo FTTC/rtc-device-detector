@@ -55,7 +55,7 @@ export default () => {
 | visible           | Boolean  | 控制是否展示设备检测弹窗                                     |
 | onClose           | Function | 设备检测弹窗关闭的回调函数                                   |
 | lang              | String   | 'zh-CN'\|'en', 用来指定设备检测语言类型，默认为'zh-CN'（中文） |
-| audioUrl          | String   | 扬声器检测时播放的音频地址，默认为腾讯云实时音视频介绍语音。 |
+| audioUrl          | String   | 扬声器检测时播放的音频地址，默认为声音测试语音  |
 | hasCameraDetect   | Boolean  | 默认值为true, 是否包含摄像头检测（适用于语音通话检测场景）, 自 v1.0.5 版本支持               |
 | hasNetworkDetect  | Boolean  | 默认值为true, 是否包含网络检测                               |
 | networkDetectInfo | Object   | 网络检测进房参数，如hasNetworkDetect为false，则不需要传入networkDetectInfo |

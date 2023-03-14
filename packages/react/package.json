@@ -1,6 +1,6 @@
 {
   "name": "rtc-device-detector-react",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "main": "dist/index.js",
   "author": "xinlxinli",
   "license": "MIT",
