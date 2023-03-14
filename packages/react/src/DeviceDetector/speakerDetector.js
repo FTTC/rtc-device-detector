@@ -5,7 +5,7 @@ import Button from './base-components/button/button';
 
 const currentDetector = 'speaker';
 let audioPlayer = null;
-const mp3Url = 'https://1256993030.vod2.myqcloud.com/d520582dvodtransgzp1256993030/45f1edea3701925920950247965/v.f1010.mp3';
+const mp3Url = 'https://web.sdk.qcloud.com/trtc/electron/download/resources/media/TestSpeaker.mp3';
 export default function SpeakerDetector({ audioUrl, activeDetector, handleCompleted }) {
   const [speakerLabel, setSpeakerLabel] = useState('');
   const [url, setUrl] = useState('');
